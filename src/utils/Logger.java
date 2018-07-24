@@ -20,7 +20,7 @@ public class Logger {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        pw.write(currentTime() + ": " + detail + "\n");
+        pw.write(currentTime() + ": " + detail + "\r\n");
         pw.flush();
         pw.close();
     }
