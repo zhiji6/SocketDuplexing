@@ -3,6 +3,8 @@ package cs.thread;
 
 
 import cs.service.imp.Server;
+import message.queue.GenericQueue;
+import utils.Logger;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -14,17 +16,21 @@ public class ReadThread implements Runnable {
     private Socket client;
     private final String identity;
     private boolean isClient;
+    private boolean isTerminal;
     private DataInputStream dis;
     private static Map<String,Socket> clientMap;
     private String token;
     private Server server;
+    private GenericQueue messageQueue;
 
-    public ReadThread(Socket client, Map<String,Socket> clientMap, boolean isClient, Server server){
+    public ReadThread(Socket client, Map<String,Socket> clientMap, GenericQueue messageQueue, boolean isClient, boolean isTerminal, Server server){
         this.client = client;
         this.isClient = isClient;
+        this.isTerminal = isTerminal;
         this.clientMap = clientMap;
         identity = isClient ? "client" : "server";
         this.server = server;
+        this.messageQueue = messageQueue;
     }
 
     @Override
@@ -50,11 +56,16 @@ public class ReadThread implements Runnable {
                         System.out.println("Something wrong happened while shutting down client!");
                     }
                 }
-                System.out.println(content);
+                if(isTerminal)
+                    System.out.println(content);
+                if(isClient && identity.equals("client") && !isTerminal){
+                    messageQueue.putMessage(content);
+                }
                 if(!isClient) {
                     clientMap.put(content, client);
                     token = content;
                     isClient = !isClient;
+                    Logger.log("Client connected " + token);
                 }
                 if(isClient && identity.equals("server")){
                     /**

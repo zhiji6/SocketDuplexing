@@ -2,6 +2,7 @@ package cs.thread;
 
 import message.queue.GenericQueue;
 import utils.IPTool;
+import utils.Logger;
 
 import java.io.DataOutputStream;
 import java.io.IOException;

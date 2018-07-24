@@ -13,13 +13,17 @@ public class Client implements GenericClient {
     private String clientToken;
     private boolean isLAN;
     private boolean isClient;
-    private GenericQueue messageQueue;
+    private boolean isTerminal;
+    private GenericQueue sendQueue;
+    private GenericQueue recvQueue;
 
-    public Client(GenericQueue messageQueue, String clientToken, boolean isLAN){
-        this.messageQueue = messageQueue;
+    public Client(GenericQueue sendQueue, GenericQueue recvQueue, String clientToken, boolean isLAN, boolean isTerminal){
+        this.sendQueue = sendQueue;
+        this.recvQueue = recvQueue;
         this.clientToken = clientToken;
         this.isLAN = isLAN;
         isClient = true;
+        this.isTerminal = isTerminal;
     }
 
     @Override
@@ -30,8 +34,8 @@ public class Client implements GenericClient {
             System.out.println("Connection failed! Please check on the server!");
         }
 
-        new Thread(new ReadThread(client, null, isClient, null)).start();
-        new Thread(new WriteThread(client, clientToken, messageQueue, isClient, isLAN)).start();
+        new Thread(new ReadThread(client, null, recvQueue, isClient, isTerminal, null)).start();
+        new Thread(new WriteThread(client, clientToken, sendQueue, isClient, isLAN)).start();
 
         return client;
     }

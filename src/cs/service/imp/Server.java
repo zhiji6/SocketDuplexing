@@ -3,6 +3,7 @@ package cs.service.imp;
 import cs.service.GenericServer;
 import cs.thread.ReadThread;
 import message.queue.GenericQueue;
+import utils.Logger;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -39,8 +40,10 @@ public class Server implements GenericServer {
         Socket client;
         try {
             serverSocket = new ServerSocket(port);
+            Logger.log("Server started ip: " + serverSocket.getInetAddress().getHostAddress() + " port: " + serverSocket.getLocalPort());
         } catch (IOException e) {
             e.printStackTrace();
+            Logger.log("Server started failed ip: " + serverSocket.getInetAddress().getHostAddress() + " port: " + serverSocket.getLocalPort());
         }
         startBroadcasting();//首先开启一个广播线程
         while(true) {
@@ -50,7 +53,7 @@ public class Server implements GenericServer {
                 break;//服务端已经关闭了的话则结束本线程
             }
                 System.out.println("A client has just connected...");
-                readThread = new ReadThread(client, clientMap, isClient, this);
+                readThread = new ReadThread(client, clientMap, null, isClient, true, this);
                 new Thread(readThread).start();
             }
     }
@@ -63,10 +66,12 @@ public class Server implements GenericServer {
     public void serverShutDown() {
         if(serverSocket != null) {
             try {
+                Logger.log("Server closed ip: " + serverSocket.getInetAddress().getHostAddress() + " port: " + serverSocket.getLocalPort());
                 serverSocket.close();
                 System.exit(0);//这个到具体应用上的作用待检验
             } catch (IOException e) {
                 e.printStackTrace();
+                Logger.log("Problem occurred while shutting down server ip: " + serverSocket.getInetAddress().getHostAddress() + " port: " + serverSocket.getLocalPort());
             }
         }
     }
@@ -83,6 +88,7 @@ public class Server implements GenericServer {
             try {
                 new DataOutputStream(v.getOutputStream()).writeUTF(content);
                 } catch (IOException e) {
+                Logger.log("Client removed " + k);
                 clientMap.remove(k);
             }
         });
@@ -123,6 +129,7 @@ public class Server implements GenericServer {
                             new DataOutputStream(v.getOutputStream()).writeUTF(message);
                         } catch (IOException e) {
                             System.out.println("Failed to send to " + client);
+                            Logger.log("Failed messaging client " + client);
                         }
                     }
                 });

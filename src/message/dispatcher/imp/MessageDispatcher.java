@@ -32,7 +32,7 @@ public enum MessageDispatcher implements Dispatcher {
         @Override
         public void dispatchClientOnTerminal(String ip, int port, String clientToken, boolean isLAN) {
             GenericQueue mq = new MessageQueue();
-            GenericClient client = new Client(mq, clientToken, isLAN);
+            GenericClient client = new Client(mq, null, clientToken, isLAN, true);
             client.connectServer(ip, port);
             String message;
             while(true){
@@ -46,7 +46,13 @@ public enum MessageDispatcher implements Dispatcher {
         @Override
         public MessageManager dispatchClientOnApplication(String ip, int port, String clientToken, boolean isLAN) {
             MessageManager mm = MessageManager.getInstance();
-            mm.setMessageQueue(new MessageQueue());
+            mm.setSendQueue(new MessageQueue());
+            mm.setRecvQueue(new MessageQueue());
+            mm.setIp(ip);
+            mm.setPort(port);
+            mm.setClientToken(clientToken);
+            mm.setLAN(isLAN);
+            mm.connect();
             return mm;
         }
     };
