@@ -77,6 +77,10 @@ public class MessageManager {
         sendQueue.putMessage(sb.toString());
     }
 
+    /**
+     * 这是一个阻塞方法，直到得到消息才会返回消息
+     * @return 按顺序返回收到的消息
+     */
     public static String receiveMessage(){
         return recvQueue.takeMessage();
     }
