@@ -18,12 +18,14 @@
 首先在作为服务器的主机上开启服务端
 
   Dispatcher dispatcher = MessageDispatcher.getInstance();
+  
   dispatcher.dispatchServerOnTerminal(端口号(int), 是否为局域网(boolean));
   
 然后是客户端
 如果只是简单的在终端进行传输任务，则可以
 
   Dispatcher dispatcher = MessageDispatcher.getInstance();
+  
   dispatcher.dispatchClientOnTerminal(服务器ip地址(String), 服务端监听的端口(int), 用户唯一标识(String), 是否为局域网(boolean));
   
 如果是做成应用，比如一个可视化的聊天软件，则可以
