@@ -48,4 +48,6 @@ MessageManager mm = dispatcher.dispatchClientOnApplication(服务器ip地址(Str
 
 另外退出应用的时候记得调用closeClient方法
 
+关于是否为局域网的boolean类型参数，如果是局域网的话，服务端给用户的标识为用户局域网ip加上用户唯一标识比如x.x.x.x/Mike，若为非局域网那么会多加一个外网ip比如x.x.x.x/x.x.x.x/Mike，根据实际情况传参即可。
+
 日志模块目前就是简单的在服务端记录服务端和客户连接的情况保存在server.log里，有更详细的需要可以自行改动
