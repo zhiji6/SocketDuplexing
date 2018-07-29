@@ -13,6 +13,10 @@
 旅游了几天，今天把剩下的模块做完了
 包括应用层的接收消息队列和简单的日志模块
 
+2018/07/29
+给接收消息添加上了发送者标识
+消息内容经过一个过滤器处理
+
 下面是使用姿势：
 
 首先在作为服务器的主机上开启服务端
@@ -31,9 +35,9 @@
   
 如果是做成应用，比如一个可视化的聊天软件，则可以
 
-MessageManager mm = dispatcher.dispatchClientOnApplication(服务器ip地址(String), 服务端监听的端口(int), 用户唯一标识(String),是否为局域网(boolean));
+MessageHandler mm = dispatcher.dispatchClientOnApplication(服务器ip地址(String), 服务端监听的端口(int), 用户唯一标识(String),是否为局域网(boolean));
 
-应用层用得到的这个MessageManager消息管理器来进行通讯
+应用层用得到的这个MessageHandler消息管理器来进行通讯
 
 它里面有两个主要方法
 
