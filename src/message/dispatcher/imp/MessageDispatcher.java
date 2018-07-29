@@ -5,7 +5,7 @@ import cs.service.GenericServer;
 import cs.service.imp.Client;
 import cs.service.imp.Server;
 import message.dispatcher.Dispatcher;
-import message.manager.MessageManager;
+import message.manager.MessageHandler;
 import message.queue.GenericQueue;
 import message.queue.imp.MessageQueue;
 
@@ -38,14 +38,14 @@ public enum MessageDispatcher implements Dispatcher {
             while(true){
                 Scanner sc = new Scanner(System.in);
                 message = sc.nextLine();
-                mq.putMessage(message);
+                mq.putMessage(message + " -f " + clientToken);
                 if(message.equals("shutdown -c")) break;
             }
         }
 
         @Override
-        public MessageManager dispatchClientOnApplication(String ip, int port, String clientToken, boolean isLAN) {
-            MessageManager mm = MessageManager.getInstance();
+        public MessageHandler dispatchClientOnApplication(String ip, int port, String clientToken, boolean isLAN) {
+            MessageHandler mm = MessageHandler.getInstance();
             mm.setSendQueue(new MessageQueue());
             mm.setRecvQueue(new MessageQueue());
             mm.setIp(ip);

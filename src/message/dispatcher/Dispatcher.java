@@ -1,6 +1,6 @@
 package message.dispatcher;
 
-import message.manager.MessageManager;
+import message.manager.MessageHandler;
 
 public interface Dispatcher {
     /**
@@ -28,5 +28,5 @@ public interface Dispatcher {
      * @return 返回一个消息管理器供应用层调用
      */
 
-    MessageManager dispatchClientOnApplication(String ip, int port, String clientToken, boolean isLAN);
+    MessageHandler dispatchClientOnApplication(String ip, int port, String clientToken, boolean isLAN);
 }

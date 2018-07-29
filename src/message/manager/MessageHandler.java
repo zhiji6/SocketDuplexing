@@ -5,7 +5,11 @@ import cs.service.imp.Client;
 import message.queue.GenericQueue;
 import java.util.Vector;
 
-public class MessageManager {
+/**
+ * @author Wenqiang Luo
+ * @date 2018/07/24
+ */
+public class MessageHandler {
     private static GenericQueue sendQueue = null;
     private static GenericQueue recvQueue = null;
     
@@ -15,29 +19,29 @@ public class MessageManager {
     private static boolean isLAN;
 
     public static void setIp(String ip) {
-        MessageManager.ip = ip;
+        MessageHandler.ip = ip;
     }
 
     public static void setPort(int port) {
-        MessageManager.port = port;
+        MessageHandler.port = port;
     }
 
     public static void setClientToken(String clientToken) {
-        MessageManager.clientToken = clientToken;
+        MessageHandler.clientToken = clientToken;
     }
 
     public void setLAN(boolean LAN) {
         isLAN = LAN;
     }
 
-    private static MessageManager messageManager = null;
+    private static MessageHandler messageHandler = null;
 
-    private MessageManager(){}
+    private MessageHandler(){}
 
-    public static MessageManager getInstance(){
-        if(messageManager == null)
-            messageManager = new MessageManager();
-        return messageManager;
+    public static MessageHandler getInstance(){
+        if(messageHandler == null)
+            messageHandler = new MessageHandler();
+        return messageHandler;
     }
 
     /**
@@ -45,8 +49,8 @@ public class MessageManager {
      * @param sendQueue 用来发送的消息队列
      */
     public static void setSendQueue(GenericQueue sendQueue){
-        if(MessageManager.sendQueue == null)
-            MessageManager.sendQueue = sendQueue;
+        if(MessageHandler.sendQueue == null)
+            MessageHandler.sendQueue = sendQueue;
     }
 
     /**
@@ -54,8 +58,8 @@ public class MessageManager {
      * @param recvQueue 用来接收的消息队列
      */
     public static void setRecvQueue(GenericQueue recvQueue){
-        if(MessageManager.recvQueue == null)
-            MessageManager.recvQueue = recvQueue;
+        if(MessageHandler.recvQueue == null)
+            MessageHandler.recvQueue = recvQueue;
     }
 
     /**
