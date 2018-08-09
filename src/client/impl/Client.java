@@ -1,8 +1,8 @@
-package cs.service.imp;
+package client.impl;
 
-import cs.service.GenericClient;
-import cs.thread.ReadThread;
-import cs.thread.WriteThread;
+import client.GenericClient;
+import thread.ReadThread;
+import thread.WriteThread;
 import message.queue.GenericQueue;
 
 import java.io.IOException;
@@ -31,6 +31,7 @@ public class Client implements GenericClient {
         try {
             client = new Socket("localhost", 33333);
         } catch (IOException e) {
+            e.printStackTrace();
             System.out.println("Connection failed! Please check on the server!");
         }
 

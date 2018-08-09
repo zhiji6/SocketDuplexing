@@ -1,12 +1,14 @@
-package cs.service.imp;
+package server.impl;
 
-import cs.service.GenericServer;
-import cs.thread.ReadThread;
+import server.GenericServer;
+import thread.ReadThread;
+import message.constants.MessageParam;
 import message.queue.GenericQueue;
 import utils.Logger;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Map;
@@ -50,6 +52,7 @@ public class Server implements GenericServer {
             try {
                 client = serverSocket.accept();
             }catch (IOException e){
+                e.printStackTrace();
                 break;//服务端已经关闭了的话则结束本线程
             }
                 System.out.println("A client has just connected...");
@@ -81,29 +84,32 @@ public class Server implements GenericServer {
      * 向用户广播消息
      * 通常用于一对多的通信
      * 一对一通信则优先选择单播
+     * 用多线程保证用户同时收到广播
      */
     @Override
     public void broadcast(String content) {
         clientMap.forEach((k, v) ->{
-            try {
-                new DataOutputStream(v.getOutputStream()).writeUTF(content);
+            new Thread(()-> {
+                try {
+                    new DataOutputStream(v.getOutputStream()).writeUTF(content);
+                    //要用多线程
                 } catch (IOException e) {
-                Logger.log("Client removed " + k);
-                clientMap.remove(k);
-            }
+                    Logger.log("Client removed " + k);
+                    clientMap.remove(k);
+                }
+            }).start();
         });
     }
 
     /**
      * 开启一个广播线程
-     * 定制一条服务端关闭指令
      */
     private void startBroadcasting(){
         new Thread(()->{
                 String message;
                 while(true){
                     message = messageQueue.takeMessage();
-                    if(message.equals("shutdown -s")){
+                    if(message.equals(MessageParam.SERVER_SHUTDOWN)){
                         serverShutDown();
                         break;
                     }
@@ -114,20 +120,19 @@ public class Server implements GenericServer {
     }
 
     /**
-     * 此方法非接口规定方法
-     * 后期可自由开发更好的发送方法
-     *
      * 每个用户一个线程发发送
-     * 尽量保证每个用户同时收到消息
+     * 用多线程保证每个用户同时收到消息
      */
     public void send(String[] clients, String message) {
         for(String client : clients){
             new Thread(()->{
                 clientMap.forEach((k,v)->{
-                    if(k.contains(client)) {
+                    String[] info = k.split("/");
+                    if(info[info.length - 1].equals(client)) {
                         try {
                             new DataOutputStream(v.getOutputStream()).writeUTF(message);
                         } catch (IOException e) {
+                            e.printStackTrace();
                             System.out.println("Failed to send to " + client);
                             Logger.log("Failed messaging client " + client);
                         }

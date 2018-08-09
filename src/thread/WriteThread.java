@@ -1,8 +1,8 @@
-package cs.thread;
+package thread;
 
+import message.constants.MessageParam;
 import message.queue.GenericQueue;
 import utils.IPTool;
-import utils.Logger;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -39,12 +39,16 @@ public class WriteThread implements Runnable {
         try {
             OutputStream os = client.getOutputStream();
             dos = new DataOutputStream(os);
+            //如果是客户端则首先发送Ip给服务端
             if (isClient) {
                 String localIp = IPTool.getLocalIp();
+                //因为只是第一次要发送客户信息，所以发送完就取消状态标记
                 isClient = !isClient;
+                //如果是局域网环境则只发送内网ip
                 if(isLAN) {
                     dos.writeUTF(localIp + "/" + clientToken);
                 }else{
+                    //如果是非局域网环境则还要发送外网ip
                     String ip = IPTool.getIp();
                     dos.writeUTF(ip + "/" + localIp + "/" + clientToken);
                 }
@@ -55,13 +59,14 @@ public class WriteThread implements Runnable {
             String message;
             while(true){
                 message = messageQueue.takeMessage();
-                if(message.equals("shutdown -c")) {
+                //用startsWith因为发过来的消息加上了发送者标识，所以并不是单纯的一条指令
+                if((message).startsWith(MessageParam.CLIENT_SHUTDOWN)) {
                     try {
-                        dos.close();
                         dos.close();
                         client.close();
                         break;
                     } catch (IOException e) {
+                        e.printStackTrace();
                         System.out.println("Something wrong happened while shutting down the client!");
                     }
                 }
@@ -69,6 +74,7 @@ public class WriteThread implements Runnable {
                     dos.writeUTF(message);
                 } catch (IOException e) {
                     System.out.println("Transportation failed! Please check on the server!");
+                    e.printStackTrace();
                     break;
                 }
             }

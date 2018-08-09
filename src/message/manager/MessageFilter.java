@@ -1,6 +1,7 @@
 package message.manager;
 
 
+import message.constants.MessageParam;
 
 public class MessageFilter {
     private String content;
@@ -17,10 +18,10 @@ public class MessageFilter {
      */
     public void setContent(String content) {
         this.content = content;
-        if(content.startsWith("-t ")){
+        if(content.startsWith(MessageParam.TALK_HEAD + " ")){
             StringBuffer sb = new StringBuffer();
-            int end = content.indexOf("-end");
-            int fEnd = content.lastIndexOf("-f");
+            int end = content.indexOf(MessageParam.TALK_TAIL);
+            int fEnd = content.lastIndexOf(MessageParam.TALK_FROM);
             if(end == -1 || fEnd == -1){
                 message = null;
                 clients = null;

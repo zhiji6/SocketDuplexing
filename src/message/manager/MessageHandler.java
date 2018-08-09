@@ -1,7 +1,8 @@
 package message.manager;
 
-import cs.service.GenericClient;
-import cs.service.imp.Client;
+import client.GenericClient;
+import client.impl.Client;
+import message.constants.MessageParam;
 import message.queue.GenericQueue;
 import java.util.Vector;
 
@@ -75,8 +76,8 @@ public class MessageHandler {
         clients.forEach((c)->{
             sb.append(" " + c);
         });
-        sb.insert(0, "-t");
-        sb.append("-end");
+        sb.insert(0, MessageParam.TALK_HEAD);
+        sb.append(MessageParam.TALK_TAIL);
         sb.append(" " + message);
         sendQueue.putMessage(sb.toString());
     }
@@ -86,11 +87,11 @@ public class MessageHandler {
      * @return 按顺序返回收到的消息
      */
     public static String receiveMessage(){
-        return recvQueue.takeMessage();
+        return (String)recvQueue.takeMessage();
     }
 
     public static void closeClient(){
-        sendQueue.putMessage("shutdown -c");
+        sendQueue.putMessage(MessageParam.CLIENT_SHUTDOWN);
     }
 
     public static void connect() {

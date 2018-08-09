@@ -1,4 +1,4 @@
-package cs.service;
+package client;
 
 import java.net.Socket;
 

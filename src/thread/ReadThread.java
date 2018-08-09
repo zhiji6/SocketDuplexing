@@ -1,8 +1,9 @@
-package cs.thread;
+package thread;
 
 
 
-import cs.service.imp.Server;
+import server.impl.Server;
+import message.constants.MessageParam;
 import message.manager.MessageFilter;
 import message.queue.GenericQueue;
 import utils.Logger;
@@ -29,7 +30,7 @@ public class ReadThread implements Runnable {
         this.isClient = isClient;
         this.isTerminal = isTerminal;
         this.clientMap = clientMap;
-        identity = isClient ? "client" : "server";
+        identity = isClient ? MessageParam.CLIENT_IDENTITY : MessageParam.SERVER_IDENTITY;
         this.server = server;
         this.messageQueue = messageQueue;
     }
@@ -48,7 +49,7 @@ public class ReadThread implements Runnable {
                 String content = null;
                 try {
                     content = dis.readUTF();
-                } catch (IOException e) {
+                } catch (Exception e) {
                     try {
                         dis.close();
                         is.close();
@@ -56,6 +57,7 @@ public class ReadThread implements Runnable {
                         //服务端或客户端读消息失败的话说明对应连接的客户端或服务端已挂，则结束本线程
                         break;
                     }catch (IOException e1){
+                        e1.printStackTrace();
                         System.out.println("Something wrong happened while shutting down client!");
                     }
                 }
@@ -63,7 +65,7 @@ public class ReadThread implements Runnable {
                 if(isTerminal)
                     System.out.println(content);
                 //如果是身份为客户端并为应用模式而不是终端模式
-                if(isClient && identity.equals("client") && !isTerminal){
+                if(isClient && identity.equals(MessageParam.CLIENT_IDENTITY) && !isTerminal){
                     messageQueue.putMessage(content);
                 }
                 //若为服务端，因为客户端连接成功后默认会隐秘发送一条客户唯一标识消息
@@ -78,7 +80,7 @@ public class ReadThread implements Runnable {
                 //经过了上面的置反操作后的服务端开始接收转发客户消息
                 //客户消息交给消息过滤器MessageFilter进行分割、加密、过滤等处理
                 //处理后转发给对应的客户端
-                if(isClient && identity.equals("server")){
+                if(isClient && identity.equals(MessageParam.SERVER_IDENTITY)){
                     mf.setContent(content);
                     String[] clients = mf.getClients();
                     String message = mf.getFilteredMessage();

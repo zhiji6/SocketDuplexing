@@ -1,4 +1,4 @@
-package cs.service;
+package server;
 
 public interface GenericServer {
     /**

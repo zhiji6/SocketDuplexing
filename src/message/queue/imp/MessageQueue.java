@@ -25,6 +25,7 @@ public class MessageQueue implements GenericQueue {
         try {
             message = messageQueue.take();
         } catch (InterruptedException e) {
+            e.printStackTrace();
             System.out.println("waiting for message...");
         }
         return message;
@@ -35,6 +36,7 @@ public class MessageQueue implements GenericQueue {
         try {
             messageQueue.put(message);
         } catch (InterruptedException e) {
+            e.printStackTrace();
             System.out.println("Message busy...");
         }
     }

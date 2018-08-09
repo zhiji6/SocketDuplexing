@@ -1,9 +1,10 @@
 package message.dispatcher.imp;
 
-import cs.service.GenericClient;
-import cs.service.GenericServer;
-import cs.service.imp.Client;
-import cs.service.imp.Server;
+import client.GenericClient;
+import server.GenericServer;
+import client.impl.Client;
+import server.impl.Server;
+import message.constants.MessageParam;
 import message.dispatcher.Dispatcher;
 import message.manager.MessageHandler;
 import message.queue.GenericQueue;
@@ -23,7 +24,7 @@ public enum MessageDispatcher implements Dispatcher {
                     Scanner sc = new Scanner(System.in);
                     message = sc.nextLine();
                     mq.putMessage(message);
-                    if(message.equals("shutdown -s")) break;
+                    if(message.equals(MessageParam.SERVER_SHUTDOWN)) break;
                 }
             }).start();
             server.startListening(port);
@@ -38,8 +39,8 @@ public enum MessageDispatcher implements Dispatcher {
             while(true){
                 Scanner sc = new Scanner(System.in);
                 message = sc.nextLine();
-                mq.putMessage(message + " -f " + clientToken);
-                if(message.equals("shutdown -c")) break;
+                mq.putMessage(message + " " + MessageParam.TALK_FROM + " " + clientToken);
+                if(message.equals(MessageParam.CLIENT_SHUTDOWN)) break;
             }
         }
 
