@@ -13,20 +13,21 @@ public class IPTool {
      */
     public static String getIp() throws IOException {
         String ip = "";
-        String chinaz = "http://ip.chinaz.com";
+        String website = "http://120.79.88.254:8080/ipserver/IpPage";
 
-        StringBuilder inputLine = new StringBuilder();
-        String read;
+        String line;
         URL url;
         HttpURLConnection urlConnection;
         BufferedReader in = null;
         try {
-            url = new URL(chinaz);
+            url = new URL(website);
             urlConnection = (HttpURLConnection) url.openConnection();
             in = new BufferedReader( new InputStreamReader(urlConnection.getInputStream(),"UTF-8"));
-            while((read=in.readLine())!=null){
-                System.out.println(read);
-                inputLine.append(read+"\r\n");
+            while((line=in.readLine())!=null){
+                if(line.contains("<p>")){
+                    ip = line.substring(line.indexOf("<p>") + 3, line.indexOf("</p>"));
+                    break;
+                }
             }
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -40,12 +41,6 @@ public class IPTool {
                     e.printStackTrace();
                 }
             }
-        }
-        Pattern p = Pattern.compile("\\<dd class\\=\"fz24\">(.*?)\\<\\/dd>");
-        Matcher m = p.matcher(inputLine.toString());
-        if(m.find()){
-            String ipstr = m.group(1);
-            ip = ipstr;
         }
         return ip;
     }
