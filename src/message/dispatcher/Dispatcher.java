@@ -1,32 +1,28 @@
 package message.dispatcher;
 
 import message.manager.MessageHandler;
+import utils.SocketConfiguration;
 
 public interface Dispatcher {
     /**
      *开启服务端监听
-     * @param port 监听的端口
-     * @param isLAN 是否为局域网，true为内网，false则为外网
+     * @param conf Socket配置
      */
-    void dispatchServerOnTerminal(int port, boolean isLAN);
+    void dispatchServerOnTerminal(SocketConfiguration conf);
 
     /**
      * 在终端运行客户端
-     * @param ip 服务器ip
-     * @param port 端口
      * @param clientToken 用户唯一标识符
-     * @param isLAN 是否为局域网，true为内网，false则为外网
+     * @param conf Socket配置
      */
-    void dispatchClientOnTerminal(String ip, int port, String clientToken, boolean isLAN);
+    void dispatchClientOnTerminal(String clientToken, SocketConfiguration conf);
 
     /**
      * 在应用层运行客户端
-     * @param ip 服务器ip
-     * @param port 端口
+     * @param conf Socket配置
      * @param clientToken 用户唯一标识符
-     * @param isLAN 是否为局域网，true为内网，false则为外网
      * @return 返回一个消息管理器供应用层调用
      */
 
-    MessageHandler dispatchClientOnApplication(String ip, int port, String clientToken, boolean isLAN);
+    MessageHandler dispatchClientOnApplication(SocketConfiguration conf, String clientToken);
 }

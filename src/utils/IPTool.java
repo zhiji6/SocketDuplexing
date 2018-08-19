@@ -25,6 +25,7 @@ public class IPTool {
             urlConnection = (HttpURLConnection) url.openConnection();
             in = new BufferedReader( new InputStreamReader(urlConnection.getInputStream(),"UTF-8"));
             while((read=in.readLine())!=null){
+                System.out.println(read);
                 inputLine.append(read+"\r\n");
             }
         } catch (MalformedURLException e) {

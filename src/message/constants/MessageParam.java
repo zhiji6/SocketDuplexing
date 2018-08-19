@@ -6,6 +6,7 @@ package message.constants;
  * @Date 2018/8/8 18:48
  */
 public final class MessageParam {
+    private MessageParam(){}
     public static final String SERVER_SHUTDOWN = "shutdown -s";
     public static final String CLIENT_SHUTDOWN = "shutdown -c";
     public static final String CLIENT_IDENTITY = "client";

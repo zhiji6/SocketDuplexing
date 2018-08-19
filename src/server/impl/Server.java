@@ -1,14 +1,16 @@
 package server.impl;
 
+import client.GenericClient;
+import server.ConfServer;
 import server.GenericServer;
 import thread.ReadThread;
 import message.constants.MessageParam;
 import message.queue.GenericQueue;
 import utils.Logger;
+import utils.SocketConfiguration;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Map;
@@ -17,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * 服务端对象
  */
-public class Server implements GenericServer {
+public class Server implements GenericServer, ConfServer {
     private static ServerSocket serverSocket;
     private static Map<String, Socket> clientMap = new ConcurrentHashMap<>();
     private static ReadThread readThread;
@@ -29,6 +31,11 @@ public class Server implements GenericServer {
         this.messageQueue = messageQueue;
         isClient = false;
         this.isLAN = isLAN;
+    }
+
+    @Override
+    public void listenWithConf(SocketConfiguration conf) {
+        startListening(conf.getServerPort());
     }
 
     /**
@@ -47,13 +54,15 @@ public class Server implements GenericServer {
             e.printStackTrace();
             Logger.log("Server started failed ip: " + serverSocket.getInetAddress().getHostAddress() + " port: " + serverSocket.getLocalPort());
         }
-        startBroadcasting();//首先开启一个广播线程
+        //首先开启一个广播线程
+        startBroadcasting();
         while(true) {
             try {
                 client = serverSocket.accept();
             }catch (IOException e){
                 e.printStackTrace();
-                break;//服务端已经关闭了的话则结束本线程
+                //服务端已经关闭了的话则结束本线程
+                break;
             }
                 System.out.println("A client has just connected...");
                 readThread = new ReadThread(client, clientMap, null, isClient, true, this);
@@ -71,7 +80,7 @@ public class Server implements GenericServer {
             try {
                 Logger.log("Server closed ip: " + serverSocket.getInetAddress().getHostAddress() + " port: " + serverSocket.getLocalPort());
                 serverSocket.close();
-                System.exit(0);//这个到具体应用上的作用待检验
+                System.exit(0);
             } catch (IOException e) {
                 e.printStackTrace();
                 Logger.log("Problem occurred while shutting down server ip: " + serverSocket.getInetAddress().getHostAddress() + " port: " + serverSocket.getLocalPort());
@@ -92,7 +101,6 @@ public class Server implements GenericServer {
             new Thread(()-> {
                 try {
                     new DataOutputStream(v.getOutputStream()).writeUTF(content);
-                    //要用多线程
                 } catch (IOException e) {
                     Logger.log("Client removed " + k);
                     clientMap.remove(k);
@@ -115,7 +123,6 @@ public class Server implements GenericServer {
                     }
                     broadcast(message);
                 }
-            //}
         }).start();
     }
 

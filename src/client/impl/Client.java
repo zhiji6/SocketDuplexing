@@ -1,14 +1,17 @@
 package client.impl;
 
+import client.ConfClient;
 import client.GenericClient;
+import server.ConfServer;
 import thread.ReadThread;
 import thread.WriteThread;
 import message.queue.GenericQueue;
+import utils.SocketConfiguration;
 
 import java.io.IOException;
 import java.net.Socket;
 
-public class Client implements GenericClient {
+public class Client implements GenericClient, ConfClient {
     private Socket client;
     private String clientToken;
     private boolean isLAN;
@@ -27,12 +30,19 @@ public class Client implements GenericClient {
     }
 
     @Override
+    public void connectWithConf(SocketConfiguration conf) {
+        connectServer(conf.getClientIp(), conf.getClientPort());
+    }
+
+    @Override
     public Socket connectServer(String ip, int port) {
         try {
-            client = new Socket("localhost", 33333);
+            client = new Socket(ip, port);
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("Connection failed! Please check on the server!");
+            System.exit(1);
+            return null;
         }
 
         new Thread(new ReadThread(client, null, recvQueue, isClient, isTerminal, null)).start();

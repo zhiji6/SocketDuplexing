@@ -9,15 +9,16 @@ import message.dispatcher.Dispatcher;
 import message.manager.MessageHandler;
 import message.queue.GenericQueue;
 import message.queue.imp.MessageQueue;
+import utils.SocketConfiguration;
 
 import java.util.Scanner;
 
 public enum MessageDispatcher implements Dispatcher {
     dispatcher{
         @Override
-        public void dispatchServerOnTerminal(int port, boolean isLAN) {
+        public void dispatchServerOnTerminal(SocketConfiguration conf) {
             GenericQueue mq = new MessageQueue();
-            GenericServer server = new Server(mq, isLAN);
+            GenericServer server = new Server(mq, conf.isLAN());
             new Thread(()->{
                 String message;
                 while(true){
@@ -27,14 +28,14 @@ public enum MessageDispatcher implements Dispatcher {
                     if(message.equals(MessageParam.SERVER_SHUTDOWN)) break;
                 }
             }).start();
-            server.startListening(port);
+            ((Server) server).listenWithConf(conf);
         }
 
         @Override
-        public void dispatchClientOnTerminal(String ip, int port, String clientToken, boolean isLAN) {
+        public void dispatchClientOnTerminal(String clientToken, SocketConfiguration conf) {
             GenericQueue mq = new MessageQueue();
-            GenericClient client = new Client(mq, null, clientToken, isLAN, true);
-            client.connectServer(ip, port);
+            GenericClient client = new Client(mq, null, clientToken, conf.isLAN(), true);
+            ((Client) client).connectWithConf(conf);
             String message;
             while(true){
                 Scanner sc = new Scanner(System.in);
@@ -45,14 +46,14 @@ public enum MessageDispatcher implements Dispatcher {
         }
 
         @Override
-        public MessageHandler dispatchClientOnApplication(String ip, int port, String clientToken, boolean isLAN) {
+        public MessageHandler dispatchClientOnApplication(SocketConfiguration conf, String clientToken) {
             MessageHandler mm = MessageHandler.getInstance();
             mm.setSendQueue(new MessageQueue());
             mm.setRecvQueue(new MessageQueue());
-            mm.setIp(ip);
-            mm.setPort(port);
+            mm.setIp(conf.getClientIp());
+            mm.setPort(conf.getClientPort());
             mm.setClientToken(clientToken);
-            mm.setLAN(isLAN);
+            mm.setLAN(conf.isLAN());
             mm.connect();
             return mm;
         }
