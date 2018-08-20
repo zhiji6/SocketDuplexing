@@ -3,8 +3,13 @@
 首先在作为服务器的主机上开启服务端
 
   Dispatcher dispatcher = MessageDispatcher.getInstance();
+  
+  //默认读取目录下的配置文件
+  SocketConfiguration conf = new SocketConfiguration();
+  //可以指定配置文件，不需指定的置为null
+  //SocketConfiguration conf = new SockerConfiguration(String serverConf, String clientConf);
 
-  dispatcher.dispatchServerOnTerminal(端口号(int), 是否为局域网(boolean));
+  dispatcher.dispatchServerOnTerminal(SocketConfiguration conf);
 
 然后是客户端
 
@@ -12,11 +17,11 @@
 
   Dispatcher dispatcher = MessageDispatcher.getInstance();
 
-  dispatcher.dispatchClientOnTerminal(服务器ip地址(String), 服务端监听的端口(int), 用户唯一标识(String), 是否为局域网(boolean));
+  dispatcher.dispatchClientOnTerminal(String clientToken, SocketConfiguration conf);
 
 如果是做成应用，比如一个可视化的聊天软件，则可以
 
-MessageHandler mm = dispatcher.dispatchClientOnApplication(服务器ip地址(String), 服务端监听的端口(int), 用户唯一标识(String),是否为局域网(boolean));
+MessageHandler mm = dispatcher.dispatchClientOnApplication(SocketConfiguration conf, String clientToken);
 
 应用层使用这个MessageHandler消息管理器来进行通讯操作
 
