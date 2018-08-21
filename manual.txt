@@ -4,10 +4,11 @@
 
   Dispatcher dispatcher = MessageDispatcher.getInstance();
   
-  //默认读取目录下的配置文件
+  //无参构造会默认创建服务端和客户端配置文件，服务端客户端的应用在同一目录下时比较方便
   SocketConfiguration conf = new SocketConfiguration();
   //可以指定配置文件，不需指定的置为null
   //SocketConfiguration conf = new SockerConfiguration(String serverConf, String clientConf);
+  //SocketConfiguration conf = new SocketConfiguration(SocketConfiguration.DEFAULT_SERVER_CONF_PATH, null);
 
   dispatcher.dispatchServerOnTerminal(SocketConfiguration conf);
 
@@ -16,7 +17,13 @@
 如果只是简单的在终端进行传输任务，则可以
 
   Dispatcher dispatcher = MessageDispatcher.getInstance();
-
+  
+  //无参构造会默认创建服务端和客户端配置文件，服务端客户端的应用在同一目录下时比较方便
+  SocketConfiguration conf = new SocketConfiguration();
+  //同样可以指定配置文件，不需指定的置为null
+  //SocketConfiguration conf = new SockerConfiguration(String serverConf, String clientConf);
+  //SocketConfiguration conf = new SocketConfiguration(null, SocketConfiguration.DEFAULT_CLIENT_CONF_PATH);
+  
   dispatcher.dispatchClientOnTerminal(String clientToken, SocketConfiguration conf);
 
 如果是做成应用，比如一个可视化的聊天软件，则可以
@@ -41,3 +48,7 @@ MessageHandler mm = dispatcher.dispatchClientOnApplication(SocketConfiguration c
 关于是否为局域网的boolean类型参数，如果是局域网的话，服务端给用户的标识为用户局域网ip加上用户唯一标识比如x.x.x.x/UserId，若为非局域网那么会多加一个外网ip比如x.x.x.x/x.x.x.x/UserId，根据实际情况传参即可。
 
 日志模块目前就是简单的在服务端记录服务端和客户连接的情况保存在server.log里，有更详细的需要可以自行改动
+
+serverConf.prop是服务端的配置文件，三个主要参数：监听端口，用户最大并发数量，是否为局域网环境
+
+clientConf.prop是客户端的配置文件，三个主要参数：连接ip，连接端口，是否为局域网环境
