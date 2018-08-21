@@ -19,12 +19,12 @@ public class SocketConfiguration {
     private int threadNum;
     private final String SERVER_CONF_PATH;
     private final String CLIENT_CONF_PATH;
-    private final String DEFAULT_SERVER_CONF_PATH = "serverConf.prop";
-    private final String DEFAULT_CLIENT_CONF_PATH = "clientConf.prop";
-    private final String DEFAULT_IP = "localhost";
-    private final String DEFAULT_PORT = "33333";
-    private final boolean DEFAULT_LAN = true;
-    private final int DEFAULT_THREAD_NUM = 10;
+    public static final String DEFAULT_SERVER_CONF_PATH = "serverConf.prop";
+    public static final String DEFAULT_CLIENT_CONF_PATH = "clientConf.prop";
+    private static final String DEFAULT_IP = "localhost";
+    private static final String DEFAULT_PORT = "33333";
+    private static final boolean DEFAULT_LAN = true;
+    private static final int DEFAULT_THREAD_NUM = 10;
 
     /**
      * 默认读写当前目录下的配置文件
@@ -98,7 +98,7 @@ public class SocketConfiguration {
                 clientIp = DEFAULT_IP;
                 clientPort = DEFAULT_PORT;
                 properties.setProperty("ip", clientIp);
-                properties.setProperty("port", serverPort);
+                properties.setProperty("port", clientPort);
                 properties.setProperty("isLAN", isLAN ? "true" : "false");
                 properties.store(new FileOutputStream(clientConf), null);
             }else{
