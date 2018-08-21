@@ -14,7 +14,6 @@ public class IPTool {
     public static String getIp() throws IOException {
         String ip = "";
         String website = "http://120.79.88.254:8080/ipserver/IpPage";
-
         String line;
         URL url;
         HttpURLConnection urlConnection;
@@ -34,7 +33,7 @@ public class IPTool {
         } catch (IOException e) {
             e.printStackTrace();
         }finally{
-            if(in!=null){
+            if(in != null){
                 try {
                     in.close();
                 } catch (IOException e) {

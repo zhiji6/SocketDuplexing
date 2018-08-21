@@ -15,6 +15,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * 服务端对象
@@ -26,11 +28,13 @@ public class Server implements GenericServer, ConfServer {
     private GenericQueue messageQueue;
     private boolean isClient;
     private boolean isLAN;
+    private ExecutorService executorService;
 
-    public Server(GenericQueue messageQueue, boolean isLAN){
+    public Server(GenericQueue messageQueue, boolean isLAN, int nThreads){
         this.messageQueue = messageQueue;
         isClient = false;
         this.isLAN = isLAN;
+        executorService = Executors.newFixedThreadPool(nThreads);
     }
 
     @Override
@@ -61,12 +65,13 @@ public class Server implements GenericServer, ConfServer {
                 client = serverSocket.accept();
             }catch (IOException e){
                 e.printStackTrace();
-                //服务端已经关闭了的话则结束本线程
+                //服务端已经关闭了的话则结束监听
+                executorService.shutdownNow();
                 break;
             }
-                System.out.println("A client has just connected...");
+                System.out.println("Client connecting...");
                 readThread = new ReadThread(client, clientMap, null, isClient, true, this);
-                new Thread(readThread).start();
+                executorService.submit(readThread);
             }
     }
 
@@ -80,6 +85,7 @@ public class Server implements GenericServer, ConfServer {
             try {
                 Logger.log("Server closed ip: " + serverSocket.getInetAddress().getHostAddress() + " port: " + serverSocket.getLocalPort());
                 serverSocket.close();
+                executorService.shutdownNow();
                 System.exit(0);
             } catch (IOException e) {
                 e.printStackTrace();

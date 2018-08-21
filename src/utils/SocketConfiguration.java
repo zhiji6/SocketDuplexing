@@ -16,6 +16,7 @@ public class SocketConfiguration {
     private String clientPort;
     private String serverPort;
     private boolean isLAN;
+    private int threadNum;
     private final String SERVER_CONF_PATH;
     private final String CLIENT_CONF_PATH;
     private final String DEFAULT_SERVER_CONF_PATH = "serverConf.prop";
@@ -23,6 +24,7 @@ public class SocketConfiguration {
     private final String DEFAULT_IP = "localhost";
     private final String DEFAULT_PORT = "33333";
     private final boolean DEFAULT_LAN = true;
+    private final int DEFAULT_THREAD_NUM = 10;
 
     /**
      * 默认读写当前目录下的配置文件
@@ -54,21 +56,41 @@ public class SocketConfiguration {
      * @throws IOException
      */
     private void init() throws IOException {
-        Properties properties = new Properties();
+        serverInit(new Properties());
+        clientInit(new Properties());
+    }
+
+    /**
+     * 服务器配置读取
+     * @param properties 服务器配置文件
+     * @throws IOException
+     */
+    private void serverInit(Properties properties) throws IOException {
         if(SERVER_CONF_PATH != null){
             File serverConf = new File(SERVER_CONF_PATH);
             if(!serverConf.exists()){
                 serverConf.createNewFile();
                 serverPort = DEFAULT_PORT;
+                threadNum = DEFAULT_THREAD_NUM;
                 properties.setProperty("port", serverPort);
                 properties.setProperty("isLAN", isLAN ? "true" : "false");
+                properties.setProperty("MaxClientNum", String.valueOf(threadNum));
                 properties.store(new FileOutputStream(serverConf), null);
             }else{
                 properties.load(new FileInputStream(serverConf));
                 serverPort = properties.getProperty("port");
                 isLAN = properties.getProperty("isLAN").equals("true") ? true : false;
+                threadNum = Integer.parseInt(properties.getProperty("MaxClientNum"));
             }
         }
+    }
+
+    /**
+     * 客户端配置读取
+     * @param properties 客户端配置文件
+     * @throws IOException
+     */
+    private void clientInit(Properties properties) throws IOException {
         if(CLIENT_CONF_PATH != null){
             File clientConf = new File(CLIENT_CONF_PATH);
             if(!clientConf.exists()){
@@ -103,4 +125,6 @@ public class SocketConfiguration {
     public int getServerPort() {
         return Integer.parseInt(serverPort);
     }
+
+    public int getThreadNum() { return threadNum; }
 }

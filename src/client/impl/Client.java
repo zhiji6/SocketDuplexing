@@ -36,6 +36,7 @@ public class Client implements GenericClient, ConfClient {
 
     @Override
     public Socket connectServer(String ip, int port) {
+        System.out.println("Connecting server...");
         try {
             client = new Socket(ip, port);
         } catch (IOException e) {
@@ -44,6 +45,7 @@ public class Client implements GenericClient, ConfClient {
             System.exit(1);
             return null;
         }
+        System.out.println("Connection established.");
 
         new Thread(new ReadThread(client, null, recvQueue, isClient, isTerminal, null)).start();
         new Thread(new WriteThread(client, clientToken, sendQueue, isClient, isLAN)).start();

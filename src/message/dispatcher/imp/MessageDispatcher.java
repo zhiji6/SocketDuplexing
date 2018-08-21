@@ -18,7 +18,7 @@ public enum MessageDispatcher implements Dispatcher {
         @Override
         public void dispatchServerOnTerminal(SocketConfiguration conf) {
             GenericQueue mq = new MessageQueue();
-            GenericServer server = new Server(mq, conf.isLAN());
+            GenericServer server = new Server(mq, conf.isLAN(), conf.getThreadNum());
             new Thread(()->{
                 String message;
                 while(true){
