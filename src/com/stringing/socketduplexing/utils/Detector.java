@@ -24,6 +24,7 @@ public class Detector<T> {
 
     public static Detector getInstance(){
         if(ourInstance == null){
+            //防止多线程下构造多个实例
             synchronized (Detector.class){
                 if(ourInstance == null){
                     ourInstance = new Detector();
