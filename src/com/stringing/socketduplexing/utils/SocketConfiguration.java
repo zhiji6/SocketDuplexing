@@ -15,8 +15,10 @@ public class SocketConfiguration {
     private String clientIp;
     private String clientPort;
     private String serverPort;
-    private boolean isLAN;
+    private boolean isServerLAN;
+    private boolean isClientLAN;
     private int threadNum;
+    private long detectPeriod;
     private final String SERVER_CONF_PATH;
     private final String CLIENT_CONF_PATH;
     public static final String DEFAULT_SERVER_CONF_PATH = "serverConf.prop";
@@ -25,6 +27,7 @@ public class SocketConfiguration {
     private static final String DEFAULT_PORT = "33333";
     private static final boolean DEFAULT_LAN = true;
     private static final int DEFAULT_THREAD_NUM = 10;
+    private static final long DEFAULT_DETECT_PERIOD = 1000;
 
     /**
      * 默认读写当前目录下的配置文件
@@ -33,7 +36,6 @@ public class SocketConfiguration {
     public SocketConfiguration() throws IOException {
         SERVER_CONF_PATH = DEFAULT_SERVER_CONF_PATH;
         CLIENT_CONF_PATH = DEFAULT_CLIENT_CONF_PATH;
-        isLAN = DEFAULT_LAN;
         init();
     }
 
@@ -72,15 +74,19 @@ public class SocketConfiguration {
                 serverConf.createNewFile();
                 serverPort = DEFAULT_PORT;
                 threadNum = DEFAULT_THREAD_NUM;
+                detectPeriod = DEFAULT_DETECT_PERIOD;
+                isServerLAN = DEFAULT_LAN;
                 properties.setProperty("port", serverPort);
-                properties.setProperty("isLAN", isLAN ? "true" : "false");
+                properties.setProperty("isLAN", isServerLAN ? "true" : "false");
                 properties.setProperty("MaxClientNum", String.valueOf(threadNum));
+                properties.setProperty("detectPeriod", String.valueOf(detectPeriod));
                 properties.store(new FileOutputStream(serverConf), null);
             }else{
                 properties.load(new FileInputStream(serverConf));
                 serverPort = properties.getProperty("port");
-                isLAN = properties.getProperty("isLAN").equals("true") ? true : false;
+                isServerLAN = properties.getProperty("isLAN").equals("true") ? true : false;
                 threadNum = Integer.parseInt(properties.getProperty("MaxClientNum"));
+                detectPeriod = Long.parseLong(properties.getProperty("detectPeriod"));
             }
         }
     }
@@ -97,22 +103,25 @@ public class SocketConfiguration {
                 clientConf.createNewFile();
                 clientIp = DEFAULT_IP;
                 clientPort = DEFAULT_PORT;
+                isClientLAN = DEFAULT_LAN;
                 properties.setProperty("ip", clientIp);
                 properties.setProperty("port", clientPort);
-                properties.setProperty("isLAN", isLAN ? "true" : "false");
+                properties.setProperty("isLAN", isClientLAN ? "true" : "false");
                 properties.store(new FileOutputStream(clientConf), null);
             }else{
                 properties.load(new FileInputStream(clientConf));
                 clientIp = properties.getProperty("ip");
                 clientPort = properties.getProperty("port");
-                isLAN = properties.getProperty("isLAN").equals("true") ? true : false;
+                isClientLAN = properties.getProperty("isLAN").equals("true") ? true : false;
             }
         }
     }
 
-    public boolean isLAN() {
-        return isLAN;
+    public boolean isServerLAN() {
+        return isServerLAN;
     }
+
+    public boolean isClientLAN() { return isClientLAN; }
 
     public String getClientIp() {
         return clientIp;
@@ -127,4 +136,6 @@ public class SocketConfiguration {
     }
 
     public int getThreadNum() { return threadNum; }
+
+    public long getDetectPeriod() { return detectPeriod; }
 }

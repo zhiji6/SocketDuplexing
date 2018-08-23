@@ -18,7 +18,7 @@ public enum MessageDispatcher implements Dispatcher {
         @Override
         public void dispatchServerOnTerminal(SocketConfiguration conf) {
             GenericQueue mq = new MessageQueue();
-            GenericServer server = new Server(mq, conf.isLAN(), conf.getThreadNum());
+            GenericServer server = new Server(mq, conf);
             new Thread(()->{
                 String message;
                 while(true){
@@ -28,13 +28,13 @@ public enum MessageDispatcher implements Dispatcher {
                     if(message.equals(MessageParam.SERVER_SHUTDOWN)) break;
                 }
             }).start();
-            ((Server) server).listenWithConf(conf);
+            ((Server) server).listenWithConf();
         }
 
         @Override
         public void dispatchClientOnTerminal(String clientToken, SocketConfiguration conf) {
             GenericQueue mq = new MessageQueue();
-            GenericClient client = new Client(mq, null, clientToken, conf.isLAN(), true);
+            GenericClient client = new Client(mq, null, clientToken, conf.isClientLAN(), true);
             ((Client) client).connectWithConf(conf);
             String message;
             while(true){
@@ -53,7 +53,7 @@ public enum MessageDispatcher implements Dispatcher {
             mm.setIp(conf.getClientIp());
             mm.setPort(conf.getClientPort());
             mm.setClientToken(clientToken);
-            mm.setLAN(conf.isLAN());
+            mm.setLAN(conf.isClientLAN());
             mm.connect();
             return mm;
         }

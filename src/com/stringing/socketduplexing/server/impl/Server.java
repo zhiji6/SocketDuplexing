@@ -34,18 +34,21 @@ public class Server implements GenericServer, ConfServer {
     private ExecutorService sendExecutor;
     //用来检测客户端网络状态
     private Detector<String> detector;
+    //服务端配置
+    private SocketConfiguration conf;
 
-    public Server(GenericQueue messageQueue, boolean isLAN, int nThreads){
+    public Server(GenericQueue messageQueue, SocketConfiguration conf){
         this.messageQueue = messageQueue;
         isClient = false;
-        this.isLAN = isLAN;
-        ioExecutor = Executors.newFixedThreadPool(nThreads);
+        this.conf = conf;
+        this.isLAN = conf.isServerLAN();
+        ioExecutor = Executors.newFixedThreadPool(conf.getThreadNum());
         sendExecutor = Executors.newCachedThreadPool();
         detector = Detector.getInstance();
     }
 
     @Override
-    public void listenWithConf(SocketConfiguration conf) {
+    public void listenWithConf() {
         startListening(conf.getServerPort());
     }
 
@@ -86,7 +89,7 @@ public class Server implements GenericServer, ConfServer {
     }
 
     private void detectClientStatus(){
-        detector.detect(clientMap);
+        detector.detect(clientMap, conf.getDetectPeriod());
     }
 
     /**

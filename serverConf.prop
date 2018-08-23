@@ -1,4 +1,5 @@
-#Tue Aug 21 13:40:58 CST 2018
+#Thu Aug 23 10:49:16 CST 2018
 port=33333
-MaxClientNum=15
+detectPeriod=1000
+MaxClientNum=10
 isLAN=false

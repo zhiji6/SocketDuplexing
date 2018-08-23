@@ -13,7 +13,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @Description
+ * @Description 用户网络状态检测
  * @Author Stringing
  * @Date 2018/8/22 14:33
  */
@@ -37,10 +37,20 @@ public class Detector<T> {
 
     private Detector(){}
 
+    /**
+     * 发送检测数据的心跳方法
+     * @param client 客户端
+     * @throws IOException
+     */
     private void hearBeat(Socket client)throws IOException{
         new DataOutputStream(client.getOutputStream()).writeUTF(MessageParam.FilterToken.DETECT_TOKEN.toString());
     }
 
+    /**
+     * 判断用户是否在线
+     * @param client 客户端
+     * @return true如果用户在线，否则false
+     */
     private boolean isOnLine(Socket client){
         try{
             hearBeat(client);
@@ -50,7 +60,12 @@ public class Detector<T> {
         return true;
     }
 
-    public void detect(Map<T,Socket> clientMap){
+    /**
+     * 周期性检测全体用户网络状态
+     * @param clientMap 客户端map集
+     * @param period 心跳周期
+     */
+    public void detect(Map<T,Socket> clientMap, long period){
         detectScheduler.scheduleAtFixedRate(()->{
             synchronized (Server.class) {
                 clientMap.forEach((token, client) -> {
@@ -63,7 +78,7 @@ public class Detector<T> {
                     });
                 });
             }
-        }, 0, 1000, TimeUnit.MILLISECONDS);
+        }, 0, period, TimeUnit.MILLISECONDS);
     }
 
 
