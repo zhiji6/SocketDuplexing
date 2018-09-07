@@ -11,13 +11,13 @@ public class IPTool {
      */
     public static String getIp() throws IOException {
         String ip = "";
-        String website = "http://120.79.88.254:8080/ipserver/IpPage";
+        final String IP_SOURCE = "http://120.79.88.254:8080/ipserver/IpPage";
         String line;
         URL url;
         HttpURLConnection urlConnection;
         BufferedReader in = null;
         try {
-            url = new URL(website);
+            url = new URL(IP_SOURCE);
             urlConnection = (HttpURLConnection) url.openConnection();
             in = new BufferedReader( new InputStreamReader(urlConnection.getInputStream(),"UTF-8"));
             while((line=in.readLine())!=null){
