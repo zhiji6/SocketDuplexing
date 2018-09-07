@@ -34,7 +34,7 @@ MessageHandler mm = dispatcher.dispatchClientOnApplication(SocketConfiguration c
 
 它里面有两个主要方法
 
-弟一个方法是void sendMessage(CopyOnWriteList<String> clients, String com.stringing.socketduplexing.message);
+弟一个方法是void sendMessage(CopyOnWriteList<String> clients, String message);
 
 第一个参数是用户唯一标识，从一对一到群聊可以对应的添加一到多个用户
 
